@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <_name>Plot to Roland Modela MDX-3</_name>
+    <id>org.mbeckler.modela</id>
+    <dependency type="executable" location="extensions">modela.py</dependency>
+    <dependency type="executable" location="extensions">Bezier.py</dependency>
+    <dependency type="executable" location="extensions">inkex.py</dependency>
+    <param name="device_width" type="int" min="10" max="100000" _gui-text="Output width">10000</param>
+    <param name="device_height" type="int" min="10" max="100000" _gui-text="Output height">10000</param>
+    <param name="device_origin_x" type="int" min="-100000" max="100000" _gui-text="Origin X-coordinate">0</param>
+    <param name="device_origin_y" type="int" min="-100000" max="100000" _gui-text="Origin Y-coordinate">0</param>
+    <param name="z_axis_up" type="int" min="-500" max="500" _gui-text="Z-axis 'up' setting">100</param>
+    <param name="z_axis_down" type="int" min="-500" max="500" _gui-text="Z-axis 'down' setting">-30</param>
+    <param name="bezier_points" type="int" min="2" max="1000" _gui-text="Number of points for Bezier curve linearization">100</param>
+
+    <output>
+        <extension>.rol</extension>
+        <mimetype>text/plain</mimetype>
+        <_filetypename>Roland Modela MDX-3 Plotter file (*.rol)</_filetypename>
+        <_filetypetooltip>Plotter file for Roland Modela MDX-3</_filetypetooltip>
+        <dataloss>true</dataloss>
+    </output>
+    <script>
+        <command reldir="extensions" interpreter="python">modela.py</command>
+    </script>
+</inkscape-extension>
