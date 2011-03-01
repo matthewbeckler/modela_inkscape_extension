@@ -12,7 +12,7 @@ class ModelaSimulator:
     def __init__(self, filename):
         pygame.init()
         self.screen = pygame.display.set_mode(screen_mode)
-        pygame.display.set_caption("Pygame intro")
+        pygame.display.set_caption("Modela simulator")
         self.quit = False
 
         self.cmds = []
