@@ -1,0 +1,16 @@
+origin is lower-left when looking at unit on table
+x axis increases to the right
+    origin is about even with the left vertical slider
+    max x is about even with the right vertical slider
+    max x value is about 5800, which is the max usable value
+
+y axis increases to the top
+    origin is even with the bottom of the carriage
+    max y is even with the top of the carriage
+    max y value is about 4000
+
+z of about -1500 is nearly hitting the orange plastic panel base
+z of anything positive is the highest (further from work piece)
+
+the spindle appears to accept 1/4" tools
+
