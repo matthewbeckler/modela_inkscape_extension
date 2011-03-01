@@ -11,7 +11,7 @@
     <param name="device_origin_y" type="int" min="-100000" max="100000" _gui-text="Origin Y-coordinate">0</param>
     <param name="z_axis_up" type="int" min="-500" max="500" _gui-text="Z-axis 'up' setting">100</param>
     <param name="z_axis_down" type="int" min="-500" max="500" _gui-text="Z-axis 'down' setting">-30</param>
-    <param name="bezier_points" type="int" min="2" max="1000" _gui-text="Number of points for Bezier curve linearization">100</param>
+    <param name="flat" type="float" min="0.001" max="1000" _gui-text="Minimum flatness of the subdivided curves">0.2</param>
 
     <output>
         <extension>.rol</extension>
