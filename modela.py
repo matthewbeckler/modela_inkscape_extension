@@ -70,9 +70,18 @@ class MyEffect(inkex.Effect):
 
             nodePath = ('//svg:g[@inkscape:groupmode="layer"][%d]/descendant::svg:path') % i
             for node in svg.xpath(nodePath, namespaces=inkex.NSS):
+                # these next lines added from this patch to fix the transformation issues - http://launchpadlibrarian.net/36269154/hpgl_output.py.patch
+                # possibly also want to try this code: https://bugs.launchpad.net/inkscape/+bug/600472/+attachment/1475310/+files/hpgl_output.py
+                transforms = node.xpath("./ancestor-or-self::svg:*[@transform]",namespaces=inkex.NSS)
+                matrix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]
+                for parenttransform in transforms:
+                    newmatrix = simpletransform.parseTransform(parenttransform.get("transform"))
+                    matrix = simpletransform.composeTransform(matrix, newmatrix)
+
                 d = node.get('d')
                 if len(simplepath.parsePath(d)):
                     p = cubicsuperpath.parsePath(d)
+                    simpletransform.applyTransformToPath(matrix, p) # this line is also from the transform-fixing patch mentioned above
                     cspsubdiv.cspsubdiv(p, self.options.flat)
                     for sp in p:
                         first = True
