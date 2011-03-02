@@ -3,7 +3,7 @@
 import pygame
 from pygame.locals import *
 
-screen_mode = (600, 600)
+screen_mode = (580, 400)
 color_black = 0,0,0
 color_gray = 200,200,200
 color_white = 255,255,255
@@ -19,15 +19,15 @@ class ModelaSimulator:
         with open(filename, "r") as fid:
             for line in fid:
                 line = line.strip()
-                if line.startswith("Z"):
-                    cmd, x, y, z = line.split()
-                    x = int(x)
-                    y = int(y)
-                    z = int(z)
-                    self.cmds.append((cmd, x, y, z))
-        self.cmd_index = 0
-        self.old_x = self.cmds[0][1] / 10
-        self.old_y = self.cmds[0][2] / 10
+                if line.startswith("PU") or line.startswith("PD"):
+                    cmd, x, y = line.split()
+                    x = int(x) / 10
+                    y = screen_mode[1] - (int(y) / 10)
+                    print cmd, x, y
+                    self.cmds.append((cmd, x, y))
+        self.cmd_index = -1
+        self.old_x = 0
+        self.old_y = screen_mode[1] - 0
 
         self.screen.fill(color_white)
         pygame.display.flip()
@@ -43,10 +43,10 @@ class ModelaSimulator:
         else:
             self.cmd_index += 1
             cmd = self.cmds[self.cmd_index]
-            draw_color = color_black if (cmd[3] < 0) else color_gray
-            pygame.draw.line(self.screen, draw_color, (self.old_x, self.old_y), (cmd[1] / 10, cmd[2] / 10))
-            self.old_x = cmd[1] / 10
-            self.old_y = cmd[2] / 10
+            draw_color = color_black if (cmd[0] == "PD") else color_gray
+            pygame.draw.line(self.screen, draw_color, (self.old_x, self.old_y), (cmd[1], cmd[2]))
+            self.old_x = cmd[1]
+            self.old_y = cmd[2]
 
         pygame.display.flip()
 

@@ -4,8 +4,6 @@ import simplepath
 import simplestyle
 import simpletransform
 
-import Bezier
-
 class MyEffect(inkex.Effect):
     def __init__(self):
         inkex.Effect.__init__(self)
@@ -30,16 +28,12 @@ class MyEffect(inkex.Effect):
     def output(self):
         """ This method is called last, and outputs the self.commands list to the file. """
         #print "\n".join(self.commands)
-        for i in range(1, len(self.commands)):
-            if self.commands[i-1] == self.commands[i]:
-                continue
+        for i in range(0, len(self.commands)):
             print self.commands[i]
 
-    def coord(self, x, y, z):
-        """ Returns the point as text (Z x y z) in roland coordinates. Uses self.rol_width, self.rol_height, self.rol_originX, and self.rol_originY. """
-        newX = int(self.options.device_origin_x + ( x / self.doc_width ) * self.options.device_width)
-        newY = int(self.options.device_origin_y + ( y / self.doc_height ) * self.options.device_height)
-        return "Z %d %d %d" % (newX, newY, z)
+    def conv_coords(self, x, y):
+        """ Returns the point as (x, y) in roland coordinates. """
+        return (self.options.device_origin_x + ( x / self.doc_width ) * self.options.device_width, self.options.device_origin_y + ( y / self.doc_height ) * self.options.device_height)
 
     def effect(self):
         """ This method is called first, and sets up the self.commands list for later output. """
@@ -87,9 +81,10 @@ class MyEffect(inkex.Effect):
                             if first:
                                 cmd = "PU"
                             first = False
-                            self.commands.append("%s %d %d" % (cmd, csp[1][0], csp[1][1]))
+                            x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
+                            self.commands.append("%s %d %d" % (cmd, x, y))
 
-        self.commands.append("H")
+        self.commands.append("PU 0 0")
 
 if __name__ == "__main__":
     e = MyEffect()
