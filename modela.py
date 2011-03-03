@@ -47,11 +47,12 @@ class MyEffect(inkex.Effect):
         self.doc_height = inkex.unittouu(svg.get('height'))
 
         # add header
-        self.commands.append("^DF")
-        self.commands.append("! 1")
-        self.commands.append("H")
-        self.commands.append("@ %d %d" % (self.options.z_down, self.options.z_up))
-        self.commands.append("V 30;F 30\n")
+        self.commands.append("^DF;")
+        self.commands.append("! 1;")
+        self.commands.append("H;")
+        self.commands.append("@ %d %d;" % (self.options.z_down, self.options.z_up))
+        self.commands.append("V 30;F 30;\n")
+	self.commands.append("Z 0 0 %d;" % self.options.z_up)
 
         # mostly borrowed from hgpl_output.py
         lastX = startX
@@ -62,11 +63,6 @@ class MyEffect(inkex.Effect):
         layerPath = '//svg:g[@inkscape:groupmode="layer"]'
         for layer in svg.xpath(layerPath, namespaces=inkex.NSS):
             i += 1
-            
-#            transform = layer.get('transform')
-#            self.trans_matrix = None
-#            if transform:
-#                self.trans_matrix = simpletransform.parseTransform(str(transform))
 
             nodePath = ('//svg:g[@inkscape:groupmode="layer"][%d]/descendant::svg:path') % i
             for node in svg.xpath(nodePath, namespaces=inkex.NSS):
@@ -86,14 +82,18 @@ class MyEffect(inkex.Effect):
                     for sp in p:
                         first = True
                         for csp in sp:
-                            cmd = "PD"
                             if first:
-                                cmd = "PU"
+				x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
+			        self.commands.append("Z %d %d %d;" % (x, y, self.options.z_up))
                             first = False
                             x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
-                            self.commands.append("%s %d %d" % (cmd, x, y))
+                            self.commands.append("Z %d %d %d;" % (x, y, self.options.z_down))
+			    lastX = x
+			    lastY = y
+			self.commands.append("Z %d %d %d;" % (lastX, lastY, self.options.z_up))
 
-        self.commands.append("PU 0 0")
+        self.commands.append("Z 0 0 %d;" % self.options.z_up)
+        self.commands.append("H;")
 
 if __name__ == "__main__":
     e = MyEffect()
