@@ -9,21 +9,9 @@ class MyEffect(inkex.Effect):
         inkex.Effect.__init__(self)
         self.commands = []
         self.trans_matrix = None
-        self.OptionParser.add_option("-w", "--device_width", action="store", type="int", dest="device_width", default=10000,
-                                     help="Output width")
-        self.OptionParser.add_option("--device_height", action="store", type="int", dest="device_height", default=10000,
-                                     help="Output height")
-        self.OptionParser.add_option("-x", "--device_origin_x", action="store", type="int", dest="device_origin_x", default=0,
-                                     help="Origin x-coordinate")
-        self.OptionParser.add_option("-y", "--device_origin_y", action="store", type="int", dest="device_origin_y", default=0,
-                                     help="Origin y-coordinate")
-        self.OptionParser.add_option("-u", "--z_axis_up", action="store", type="int", dest="z_up", default=100,
-                                     help="Z-axis 'up'")
-        self.OptionParser.add_option("-d", "--z_axis_down", action="store", type="int", dest="z_down", default=-30,
-                                     help="Z-axis 'down'")
-        self.OptionParser.add_option("-f", "--flatness", action="store", type="float", dest="flat", default=0.2,
-                                     help="Minimum flatness of the subdivided curves")
-
+        self.OptionParser.add_option("-u", "--z_axis_up", action="store", type="int", dest="z_up", default=-1400, help="Z-axis 'up'")
+        self.OptionParser.add_option("-d", "--z_axis_down", action="store", type="int", dest="z_down", default=-1600, help="Z-axis 'down'")
+        self.OptionParser.add_option("-f", "--flatness", action="store", type="float", dest="flat", default=0.2, help="Minimum flatness of the subdivided curves")
 
     def output(self):
         """ This method is called last, and outputs the self.commands list to the file. """
@@ -33,14 +21,10 @@ class MyEffect(inkex.Effect):
 
     def conv_coords(self, x, y):
         """ Returns the point as (x, y) in roland coordinates. """
-        return (self.options.device_origin_x + ( x / self.doc_width ) * self.options.device_width, self.options.device_origin_y + ( y / self.doc_height ) * self.options.device_height)
+        return (( x / self.doc_width ) * 5800, ( y / self.doc_height ) * 4000)
 
     def effect(self):
         """ This method is called first, and sets up the self.commands list for later output. """
-        startX = 0
-        startY = 0
-        startZ = self.options.z_up
-
         svg = self.document.getroot()
         # find document width and height, used to scale down
         self.doc_width = inkex.unittouu(svg.get('width'))
@@ -52,11 +36,11 @@ class MyEffect(inkex.Effect):
         self.commands.append("H;")
         self.commands.append("@ %d %d;" % (self.options.z_down, self.options.z_up))
         self.commands.append("V 30;F 30;\n")
-	self.commands.append("Z 0 0 %d;" % self.options.z_up)
+        self.commands.append("Z 0 0 %d;" % self.options.z_up)
 
         # mostly borrowed from hgpl_output.py
-        lastX = startX
-        lastY = startY
+        lastX = 0
+        lastY = 0
 
         # find paths in layers
         i = 0
@@ -83,14 +67,14 @@ class MyEffect(inkex.Effect):
                         first = True
                         for csp in sp:
                             if first:
-				x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
-			        self.commands.append("Z %d %d %d;" % (x, y, self.options.z_up))
+                                x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
+                                self.commands.append("Z %d %d %d;" % (x, y, self.options.z_up))
                             first = False
                             x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
                             self.commands.append("Z %d %d %d;" % (x, y, self.options.z_down))
-			    lastX = x
-			    lastY = y
-			self.commands.append("Z %d %d %d;" % (lastX, lastY, self.options.z_up))
+                            lastX = x
+                            lastY = y
+                        self.commands.append("Z %d %d %d;" % (lastX, lastY, self.options.z_up))
 
         self.commands.append("Z 0 0 %d;" % self.options.z_up)
         self.commands.append("H;")

@@ -1,8 +1,7 @@
 This is an inkscape extension to try and work with the modela brand of engravers.
-Still a work in progress, as I don't fully understand how to iterate over all paths in the inkscape svg document, and I think there is a built-in way to convert bezier curves into straight lines.
+Getting better, primarily based on the HPGL plotter output extension included with Inkscape.
 
 Written by Matthew Beckler - matthew@mbeckler.org
 Based on code written by Matt Mets:
     http://www.cibomahto.com/2010/06/carving-foam-with-the-roland-modela-mdx-3/
-
 
