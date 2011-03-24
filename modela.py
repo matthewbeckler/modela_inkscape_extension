@@ -11,6 +11,8 @@ class MyEffect(inkex.Effect):
         self.trans_matrix = None
         self.OptionParser.add_option("-u", "--z_axis_up", action="store", type="int", dest="z_up", default=-1400, help="Z-axis 'up'")
         self.OptionParser.add_option("-d", "--z_axis_down", action="store", type="int", dest="z_down", default=-1600, help="Z-axis 'down'")
+        self.OptionParser.add_option("-c", "--feed_rate_cutting", action="store", type="float", dest="feed_rate_cutting", default="1.0", help="Feed rate for cutting")
+        self.OptionParser.add_option("-m", "--feed_rate_moving", action="store", type="float", dest="feed_rate_moving", default="1.0", help="Feed rate for moving")
         self.OptionParser.add_option("-f", "--flatness", action="store", type="float", dest="flat", default=0.2, help="Minimum flatness of the subdivided curves")
 
     def output(self):
@@ -21,7 +23,7 @@ class MyEffect(inkex.Effect):
 
     def conv_coords(self, x, y):
         """ Returns the point as (x, y) in roland coordinates. """
-        return (( x / self.doc_width ) * 5800, ( y / self.doc_height ) * 4000)
+        return (( x / self.doc_width ) * 6000, ( y / self.doc_height ) * 4000)
 
     def effect(self):
         """ This method is called first, and sets up the self.commands list for later output. """
@@ -35,7 +37,7 @@ class MyEffect(inkex.Effect):
         self.commands.append("! 1;")
         self.commands.append("H;")
         self.commands.append("@ %d %d;" % (self.options.z_down, self.options.z_up))
-        self.commands.append("V 30;F 30;\n")
+        self.commands.append("V {0};F {0};\n".format(self.options.feed_rate_moving))
         self.commands.append("Z 0 0 %d;" % self.options.z_up)
 
         # mostly borrowed from hgpl_output.py
@@ -69,11 +71,13 @@ class MyEffect(inkex.Effect):
                             if first:
                                 x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
                                 self.commands.append("Z %d %d %d;" % (x, y, self.options.z_up))
+                                self.commands.append("V {0};F {0};".format(self.options.feed_rate_cutting))
                             first = False
                             x, y = self.conv_coords(csp[1][0], self.doc_height - csp[1][1])
                             self.commands.append("Z %d %d %d;" % (x, y, self.options.z_down))
                             lastX = x
                             lastY = y
+                        self.commands.append("V {0};F {0};".format(self.options.feed_rate_moving))
                         self.commands.append("Z %d %d %d;" % (lastX, lastY, self.options.z_up))
 
         self.commands.append("Z 0 0 %d;" % self.options.z_up)
