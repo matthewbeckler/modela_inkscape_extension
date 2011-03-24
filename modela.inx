@@ -6,6 +6,8 @@
     <dependency type="executable" location="extensions">inkex.py</dependency>
     <param name="z_axis_up" type="int" min="-5000" max="5000" _gui-text="Z-axis 'up' setting">-1400</param>
     <param name="z_axis_down" type="int" min="-5000" max="5000" _gui-text="Z-axis 'down' setting">-1600</param>
+    <param name="feed_rate_cutting" type="float" min="0" max="100" _gui-text="Feed rate (cutting)">2.0</param>
+    <param name="feed_rate_moving" type="float" min="0" max="100" _gui-text="Feed rate (moving)">30</param>
     <param name="flat" type="float" min="0.001" max="1000" _gui-text="Minimum flatness of the subdivided curves">0.2</param>
 
     <output>
